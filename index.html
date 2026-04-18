@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Day AECODE — Registra tus intereses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --bg:        #0d0d12;
+      --surface:   #14121f;
+      --card:      #1c1830;
+      --border:    #2e2a45;
+      --purple:    #7c3aed;
+      --purple-lt: #8b5cf6;
+      --cyan:      #06b6d4;
+      --text:      #f0eef8;
+      --muted:     #9490b0;
+      --error:     #f87171;
+      --success:   #34d399;
+      --radius:    14px;
+      --radius-sm: 8px;
+    }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      width: 100%;
+      padding: 20px 24px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 8px 18px;
+    }
+
+    .logo-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--purple-lt);
+      box-shadow: 0 0 8px var(--purple-lt);
+    }
+
+    .logo-text {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ─── MAIN ─── */
+    main {
+      width: 100%;
+      max-width: 480px;
+      padding: 32px 20px 48px;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .event-chip {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      border: 1px solid rgba(6,182,212,0.3);
+      background: rgba(6,182,212,0.08);
+      border-radius: 100px;
+      padding: 4px 14px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: clamp(22px, 6vw, 28px);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--text) 0%, var(--purple-lt) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ─── CARD / FORM ─── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--purple-lt);
+      margin-bottom: 16px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    label span.req {
+      color: var(--purple-lt);
+      margin-left: 2px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239490b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    select option {
+      background: #1c1830;
+      color: var(--text);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--purple-lt);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+    }
+
+    input.invalid, select.invalid, textarea.invalid {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(248,113,113,0.12);
+    }
+
+    input.valid, select.valid {
+      border-color: var(--success);
+    }
+
+    .field-error {
+      font-size: 11px;
+      color: var(--error);
+      margin-top: 5px;
+      display: none;
+    }
+
+    .field-error.show { display: block; }
+
+    textarea {
+      resize: vertical;
+      min-height: 72px;
+    }
+
+    /* ─── PRIORIDADES ─── */
+    .priority-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .priority-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .priority-badge {
+      flex-shrink: 0;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple-lt);
+      margin-top: 11px;
+    }
+
+    .priority-item > .field { flex: 1; margin-bottom: 0; }
+
+    /* ─── CHECKBOX ─── */
+    .checkbox-field {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .checkbox-field input[type="checkbox"] {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      accent-color: var(--purple-lt);
+      cursor: pointer;
+    }
+
+    .checkbox-field span {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ─── BUTTON ─── */
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--purple) 0%, var(--purple-lt) 100%);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover { opacity: 0.9; }
+    .btn-submit:active { transform: scale(0.99); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ─── ESTADOS ─── */
+    #estado-enviando, #estado-exito, #estado-error {
+      display: none;
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+
+    #estado-enviando {
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+
+    #estado-exito {
+      background: rgba(52,211,153,0.08);
+      border: 1px solid rgba(52,211,153,0.3);
+    }
+
+    #estado-error {
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.3);
+    }
+
+    .spinner {
+      width: 28px; height: 28px;
+      border: 3px solid var(--border);
+      border-top-color: var(--purple-lt);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .estado-icon { font-size: 32px; margin-bottom: 8px; }
+
+    .estado-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .estado-sub {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    #estado-exito .estado-title { color: var(--success); }
+    #estado-error .estado-title { color: var(--error); }
+
+    .btn-retry {
+      margin-top: 14px;
+      padding: 10px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 16px 20px 32px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ─── DESKTOP ─── */
+    @media (min-width: 520px) {
+      main { padding: 40px 24px 60px; }
+      .card { padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── HEADER BRANDING ─── -->
+  <header>
+    <div class="logo-badge">
+      <div class="logo-dot"></div>
+      <span class="logo-text">AECODE</span>
+    </div>
+  </header>
+
+  <!-- ─── MAIN CONTENT ─── -->
+  <main>
+
+    <!-- ─── HERO ─── -->
+    <div class="hero">
+      <div class="event-chip">Demo Day 2025</div>
+      <h1>Activa tus beneficios<br>del evento</h1>
+      <p>Registra tus intereses y te contactaremos con información personalizada sobre los programas que más te interesan.</p>
+    </div>
+
+    <!-- ─── FORMULARIO ─── -->
+    <div id="form-wrapper">
+
+      <!-- DATOS PERSONALES -->
+      <div class="card">
+        <div class="card-title">Datos personales</div>
+
+        <div class="field">
+          <label for="nombre">Nombre completo <span class="req">*</span></label>
+          <input type="text" id="nombre" name="nombre" placeholder="Tu nombre completo" autocomplete="name" />
+          <div class="field-error" id="err-nombre">Ingresa tu nombre completo.</div>
+        </div>
+
+        <div class="field">
+          <label for="celular">Celular <span class="req">*</span></label>
+          <input type="tel" id="celular" name="celular" placeholder="Ej. 987654321" autocomplete="tel" inputmode="numeric" />
+          <div class="field-error" id="err-celular">Ingresa un número de celular válido.</div>
+        </div>
+
+        <div class="field">
+          <label for="correo">Correo electrónico <span class="req">*</span></label>
+          <input type="email" id="correo" name="correo" placeholder="tu@correo.com" autocomplete="email" inputmode="email" />
+          <div class="field-error" id="err-correo">Ingresa un correo válido.</div>
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <label for="procedencia">Procedencia <span class="req">*</span></label>
+          <select id="procedencia" name="procedencia">
+            <option value="">Selecciona una opción</option>
+            <option value="Talent">Talent</option>
+            <option value="Invitado externo">Invitado externo</option>
+            <option value="Comunidad AECODE">Comunidad AECODE</option>
+            <option value="Partner / empresa">Partner / empresa</option>
+            <option value="Ponente / jurado">Ponente / jurado</option>
+            <option value="Otro">Otro</option>
+          </select>
+          <div class="field-error" id="err-procedencia">Selecciona tu procedencia.</div>
+        </div>
+      </div>
+
+      <!-- INTERESES -->
+      <div class="card">
+        <div class="card-title">Cursos de interés</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5">Selecciona tus 3 prioridades en orden de interés. No puedes repetir el mismo programa.</p>
+
+        <div class="priority-grid">
+          <div class="priority-item">
+            <div class="priority-badge">1</div>
+            <div class="field">
+              <label for="p1">Primera prioridad <span class="req">*</span></label>
+              <select id="p1" name="prioridad_1" onchange="validarPrioridades()">
+                <option value="">Selecciona un programa</option>
+              </select>
+              <div class="field-error" id="err-p1">Selecciona tu primera prioridad.</div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-badge">2</div>
+            <div class="field">
+              <label for="p2">Segunda prioridad <span class="req">*</span></label>
+              <select id="p2" name="prioridad_2" onchange="validarPrioridades()">
+                <option value="">Selecciona un programa</option>
+              </select>
+              <div class="field-error" id="err-p2">Selecciona tu segunda prioridad.</div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-badge">3</div>
+            <div class="field">
+              <label for="p3">Tercera prioridad <span class="req">*</span></label>
+              <select id="p3" name="prioridad_3" onchange="validarPrioridades()">
+                <option value="">Selecciona un programa</option>
+              </select>
+              <div class="field-error" id="err-p3">Selecciona tu tercera prioridad.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-error show" id="err-duplicado" style="display:none;margin-top:10px;font-size:12px">
+          No puedes seleccionar el mismo programa en dos prioridades.
+        </div>
+      </div>
+
+      <!-- COMENTARIO + AUTH -->
+      <div class="card">
+        <div class="card-title">Información adicional</div>
+
+        <div class="field">
+          <label for="comentario">Comentario adicional <span style="color:var(--muted);font-weight:400">(opcional)</span></label>
+          <textarea id="comentario" name="comentario" placeholder="¿Alguna pregunta o comentario para el equipo AECODE?"></textarea>
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <label class="checkbox-field">
+            <input type="checkbox" id="acepta_contacto" name="acepta_contacto" value="Sí" />
+            <span>Autorizo a AECODE a contactarme con información sobre sus programas y beneficios. <span class="req">*</span></span>
+          </label>
+          <div class="field-error" id="err-auth">Debes aceptar la autorización de contacto.</div>
+        </div>
+      </div>
+
+      <!-- HIDDEN FIELDS + SUBMIT -->
+      <input type="hidden" id="evento" name="evento" value="Demo Day AECODE" />
+      <input type="hidden" id="fuente" name="fuente" value="QR Evento" />
+
+      <button type="button" class="btn-submit" id="btn-enviar" onclick="enviarFormulario()">
+        Registrar mis intereses
+      </button>
+    </div>
+
+    <!-- ─── ESTADO: ENVIANDO ─── -->
+    <div id="estado-enviando">
+      <div class="spinner"></div>
+      <div class="estado-title">Enviando...</div>
+      <div class="estado-sub">Un momento, estamos guardando tu registro.</div>
+    </div>
+
+    <!-- ─── ESTADO: ÉXITO ─── -->
+    <div id="estado-exito">
+      <div class="estado-icon">✅</div>
+      <div class="estado-title">¡Registro exitoso!</div>
+      <div class="estado-sub">Tus intereses han sido guardados. El equipo AECODE te contactará pronto.</div>
+    </div>
+
+    <!-- ─── ESTADO: ERROR ─── -->
+    <div id="estado-error">
+      <div class="estado-icon">⚠️</div>
+      <div class="estado-title">Ocurrió un error</div>
+      <div class="estado-sub">No pudimos guardar tu registro. Por favor intenta de nuevo.</div>
+      <button class="btn-retry" onclick="reintentar()">Intentar de nuevo</button>
+    </div>
+
+  </main>
+
+  <footer>AECODE &copy; 2025 — Demo Day</footer>
+
+  <!-- ─── IFRAME OCULTO (receptor del form POST) ─── -->
+  <iframe id="hidden-iframe" name="hidden-iframe" style="display:none"></iframe>
+
+  <script>
+    // ─────────────────────────────────────────────────────────────
+    //  CONFIGURACIÓN — pega aquí la URL de tu Web App de Apps Script
+    // ─────────────────────────────────────────────────────────────
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVzE2-zpGHZLep8SKJvA5zJivRtqMIfbVG8rX9SJX6Y55TWX-L4_XWQ7Sc7NBl7d-f/exec';
+
+    // ─── LISTA DE CURSOS ───────────────────────────────────────────
+    const CURSOS = [
+      'Metodología de Investigación con IA',
+      'Automatización y Agentes IA con n8n',
+      'Python e IA para Ingeniería Civil',
+      'Automatización BIM con Revit, Dynamo, Python + IA',
+      'Especialista en Modelado BIM',
+      'IA aplicada a la Ingeniería y Construcción',
+      'BIM aplicado a Proyectos Hospitalarios',
+      'Coordinador, Supervisor y Gestor BIM',
+      'BIM, Lean y BI para seguimiento y control de Obra',
+      'BIM + IA & Automatización en Proyectos Viales'
+    ];
+
+    // ─── POBLAR SELECTS DE CURSOS ──────────────────────────────────
+    ['p1', 'p2', 'p3'].forEach(id => {
+      const sel = document.getElementById(id);
+      CURSOS.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+      });
+    });
+
+    // ─── VALIDACIÓN DE DUPLICADOS EN TIEMPO REAL ───────────────────
+    function validarPrioridades() {
+      const v1 = document.getElementById('p1').value;
+      const v2 = document.getElementById('p2').value;
+      const v3 = document.getElementById('p3').value;
+      const hay = [v1, v2, v3].filter(Boolean);
+      const duplicado = hay.length !== new Set(hay).size;
+      document.getElementById('err-duplicado').style.display = duplicado ? 'block' : 'none';
+      ['p1','p2','p3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (duplicado) el.classList.add('invalid'); else el.classList.remove('invalid');
+      });
+      return !duplicado;
+    }
+
+    // ─── MOSTRAR ERROR DE CAMPO ────────────────────────────────────
+    function mostrarError(campo, errId, condicion) {
+      const el = document.getElementById(campo);
+      const err = document.getElementById(errId);
+      if (condicion) {
+        el.classList.add('invalid');
+        err.classList.add('show');
+        return false;
+      } else {
+        el.classList.remove('invalid');
+        err.classList.remove('show');
+        return true;
+      }
+    }
+
+    // ─── VALIDACIÓN COMPLETA ───────────────────────────────────────
+    function validarTodo() {
+      const nombre     = document.getElementById('nombre').value.trim();
+      const celular    = document.getElementById('celular').value.trim();
+      const correo     = document.getElementById('correo').value.trim();
+      const procedencia= document.getElementById('procedencia').value;
+      const p1         = document.getElementById('p1').value;
+      const p2         = document.getElementById('p2').value;
+      const p3         = document.getElementById('p3').value;
+      const auth       = document.getElementById('acepta_contacto').checked;
+
+      const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const telRe   = /^[0-9+\-\s]{6,15}$/;
+
+      let ok = true;
+      ok = mostrarError('nombre',      'err-nombre',      !nombre)               && ok;
+      ok = mostrarError('celular',     'err-celular',     !telRe.test(celular))  && ok;
+      ok = mostrarError('correo',      'err-correo',      !emailRe.test(correo)) && ok;
+      ok = mostrarError('procedencia', 'err-procedencia', !procedencia)           && ok;
+      ok = mostrarError('p1',          'err-p1',          !p1)                   && ok;
+      ok = mostrarError('p2',          'err-p2',          !p2)                   && ok;
+      ok = mostrarError('p3',          'err-p3',          !p3)                   && ok;
+
+      const sinDuplicados = validarPrioridades();
+      if (!sinDuplicados) ok = false;
+
+      const authEl  = document.getElementById('acepta_contacto');
+      const errAuth = document.getElementById('err-auth');
+      if (!auth) {
+        errAuth.classList.add('show');
+        ok = false;
+      } else {
+        errAuth.classList.remove('show');
+      }
+
+      return ok;
+    }
+
+    // ─── ENVÍO VIA IFRAME (sin CORS) ─────────────────────────────
+    function enviarFormulario() {
+      if (!validarTodo()) return;
+
+      const btn = document.getElementById('btn-enviar');
+      btn.disabled = true;
+
+      // Construir form dinámico apuntando al iframe
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = APPS_SCRIPT_URL;
+      form.target = 'hidden-iframe';
+      form.style.display = 'none';
+
+      const campos = {
+        nombre:      document.getElementById('nombre').value.trim(),
+        celular:     document.getElementById('celular').value.trim(),
+        correo:      document.getElementById('correo').value.trim(),
+        procedencia: document.getElementById('procedencia').value,
+        prioridad_1: document.getElementById('p1').value,
+        prioridad_2: document.getElementById('p2').value,
+        prioridad_3: document.getElementById('p3').value,
+        comentario:  document.getElementById('comentario').value.trim(),
+        acepta_contacto: document.getElementById('acepta_contacto').checked ? 'Sí' : 'No',
+        evento:      'Demo Day AECODE',
+        fuente:      'QR Evento'
+      };
+
+      Object.entries(campos).forEach(([name, value]) => {
+        const input = document.createElement('input');
+        input.type  = 'hidden';
+        input.name  = name;
+        input.value = value;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+
+      // Mostrar estado enviando
+      document.getElementById('form-wrapper').style.display = 'none';
+      document.getElementById('estado-enviando').style.display = 'block';
+
+      // Detectar carga del iframe = respuesta recibida
+      const iframe = document.getElementById('hidden-iframe');
+      const timeout = setTimeout(() => manejarExito(), 8000); // fallback 8s
+
+      iframe.onload = () => {
+        clearTimeout(timeout);
+        manejarExito();
+      };
+
+      form.submit();
+      document.body.removeChild(form);
+    }
+
+    function manejarExito() {
+      document.getElementById('estado-enviando').style.display = 'none';
+      document.getElementById('estado-exito').style.display    = 'block';
+    }
+
+    function reintentar() {
+      document.getElementById('estado-error').style.display  = 'none';
+      document.getElementById('form-wrapper').style.display  = 'block';
+      document.getElementById('btn-enviar').disabled = false;
+    }
+  </script>
+
+</body>
+</html>
